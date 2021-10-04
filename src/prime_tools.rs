@@ -1,19 +1,3 @@
-/*
- *   FUNCTION LIST
- * D pub new
- * D pub get_prime
- * D pub is_prime
- *   pub prime_factorization
- *   pub factors
- *   pub factor_sum
- *   pub factor_count
- *   pub iter
- *
- *   add_prime
- *   fill_n_primes
- *   fill_till_n
-*/
-
 use std::collections::{BTreeMap, BTreeSet};
 
 pub struct PrimeTools<T> {
@@ -74,8 +58,8 @@ where
             if p > &sqrt_m {
                 if m != T::one() {
                     prime_factors.insert(m, 1);
-                    break;
                 }
+                break;
             }
         }
 
@@ -160,6 +144,17 @@ where
     }
 }
 
+impl<T> Default for PrimeTools<T>
+where
+    T: num::Integer + Clone + num::integer::Roots,
+    for<'a, 'b> &'a T: std::ops::Add<&'b T, Output = T> + std::ops::Rem<&'b T, Output = T>,
+    for<'a> T: std::ops::Add<&'a T, Output = T> + std::ops::AddAssign<&'a T>,
+{
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 pub struct PrimeIterator<'pt, T> {
     pt: &'pt mut PrimeTools<T>,
     pos: usize,
@@ -179,10 +174,3 @@ where
         Some(self.pt.get_prime(self.pos - 1).clone())
     }
 }
-
-trait MyGenInt:
-    num::Integer +
-    /*for<'a, 'b> &'a Self: std::ops::Add<&'b Self, Output = Self> +
-    for<'a, 'b> &'a Self: std::ops::Rem<&'b Self, Output = Self> +*/
-    for<'a> std::ops::Add<&'a Self, Output = Self>
-{}
