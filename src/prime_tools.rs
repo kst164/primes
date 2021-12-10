@@ -27,10 +27,14 @@ where
 
     pub fn is_prime(&mut self, n: &T) -> bool {
         if &self.primes[self.primes.len()] >= n {
-            self.primes.contains(n)
+            self.primes.binary_search(n).is_ok()
         } else {
-            self.fill_till_n(&n.sqrt());
-            self.primes.iter().all(|p| !(n % p).is_zero())
+            let sqrt_n = n.sqrt();
+            self.fill_till_n(&sqrt_n);
+            self.primes
+                .iter()
+                .take_while(|&p| p <= &sqrt_n)
+                .all(|p| !(n % p).is_zero())
         }
     }
 
@@ -117,7 +121,12 @@ where
         let mut next_prime = self.primes.last().unwrap() + &two;
 
         loop {
-            let is_prime = self.primes.iter().all(|p| !(&next_prime % p).is_zero());
+            let sqrt_next = next_prime.sqrt();
+            let is_prime = self
+                .primes
+                .iter()
+                .take_while(|&p| p <= &sqrt_next)
+                .all(|p| !(&next_prime % p).is_zero());
             if is_prime {
                 self.primes.push(next_prime.clone());
                 break;
